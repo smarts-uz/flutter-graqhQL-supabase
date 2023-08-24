@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'GraphQL Flutter Example',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.yellow,
         ),
         home: const MyHomePage(),
       ),
@@ -53,18 +53,17 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User List'),
+        title: const Text('Notes'),
       ),
       body: Query(
         options: QueryOptions(
           document: gql('''
-            query UserCollection {
-              usersCollection {
+            query NotesCollection {
+              notesCollection {
                 edges{
                   node{
-                    id
-                    name
-                    email
+                    title
+                    description
                   }
                 }
               }
@@ -83,14 +82,38 @@ class MyHomePage extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final users = result.data!['usersCollection']['edges'];
+          final users = result.data!['notesCollection']['edges'];
+          print(result.data!);
           return ListView.builder(
             itemCount: users.length,
             itemBuilder: (context, index) {
               final user = users[index];
-              return ListTile(
-                title: Text(user['node']['name']),
-                subtitle: Text(user['node']['email']),
+              return Container(
+                margin: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: Colors.yellow.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.yellow),
+                ),
+                child: ListTile(
+                  title: Text(user['node']['title']),
+                  subtitle: Text(
+                    user['node']['description'],
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.edit, color: Colors.yellow),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.delete, color: Colors.yellow),
+                      ),
+                    ],
+                  ),
+                ),
               );
             },
           );
