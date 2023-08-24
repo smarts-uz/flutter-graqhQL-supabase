@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter_graphql_testapp/add_note.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-// import 'package:flutter_dotenv/flutter_dotenv.dart' as dotenv;
 
 void main() async {
   await initHiveForFlutter();
@@ -46,14 +46,27 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Notes'),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (ctx) => const AddNoteScreen()));
+              },
+              icon: const Icon(Icons.add))
+        ],
       ),
       body: Query(
         options: QueryOptions(
@@ -62,6 +75,7 @@ class MyHomePage extends StatelessWidget {
               notesCollection {
                 edges{
                   node{
+                    id
                     title
                     description
                   }
@@ -72,7 +86,6 @@ class MyHomePage extends StatelessWidget {
         ),
         builder: (QueryResult result, {fetchMore, refetch}) {
           if (result.hasException) {
-            // print(result.exception.toString());
             return Center(
               child: Text('Error: ${result.exception.toString()}'),
             );
@@ -108,7 +121,36 @@ class MyHomePage extends StatelessWidget {
                         icon: const Icon(Icons.edit, color: Colors.yellow),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Confirm Deletion'),
+                                content: const Text(
+                                    'Are you sure you want to delete this note?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(
+                                          context); // Close the dialog
+                                    },
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(
+                                          context); // Close the dialog
+                                    },
+                                    child: const Text(
+                                      'Delete',
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
                         icon: const Icon(Icons.delete, color: Colors.yellow),
                       ),
                     ],
