@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_graphql_testapp/add_note.dart';
 import 'package:flutter_graphql_testapp/constanta.dart';
 import 'package:flutter_graphql_testapp/delete.dart';
+import 'package:flutter_graphql_testapp/edit_note.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -70,23 +71,19 @@ class _MyHomePageState extends State<MyHomePage> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Mutation(
-                        options: MutationOptions(document: gql(deleteNote)),
-                        builder: (
-                          RunMutation runMutation,
-                          QueryResult? result,
-                        ) {
-                          return ElevatedButton(
-                            onPressed: () {
-                              runMutation({
-                                'id': user['node']['id'],
-                                'title': 'Updated Title',
-                                'description': 'Updated Description',
-                              });
-                            },
-                            child: const Text('Update'),
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (ctx) => EditMutation(
+                                id: user['node']['id'].toString(),
+                                updatedTitle: user['node']['title'],
+                                updatedDescription: user['node']['description'],
+                              ),
+                            ),
                           );
                         },
+                        icon: const Icon(Icons.edit),
                       ),
                       const SizedBox(width: 10),
                       DeleteMutation(id: user['node']['id'].toString()),
