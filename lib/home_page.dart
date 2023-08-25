@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
+                      ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
@@ -83,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           );
                         },
-                        icon: const Icon(Icons.edit),
+                        child: const Text('Update'),
                       ),
                       const SizedBox(width: 10),
                       DeleteMutation(id: user['node']['id'].toString()),
