@@ -14,27 +14,27 @@ const String getNotes = '''
 
 const String addNote = '''
            mutation InsertIntonotesCollection(\$title: String!, \$description: String!) {
-    insertIntonotesCollection(objects: {title: \$title, description: \$description}) {
-        affectedCount
-        records {
-            nodeId
-            id
-            title
-            description
-        }
-    }
-}
-          ''';
-
-const String updateNote = '''
-            mutation UpdatenotesCollection(\$id: ID!, \$title: String!, \$description: String!) {
-              updatenotesCollection(object: {id: \$id, title: \$title, description: \$description}) {
-                id
-                title
-                description
+            insertIntonotesCollection(objects: {title: \$title, description: \$description}) {
+              affectedCount
+                records {
+                  nodeId
+                  id
+                  title
+                  description
+                }
               }
             }
           ''';
+
+// const String updateNote = '''
+//             mutation UpdatenotesCollection(\$id: ID!, \$title: String!, \$description: String!) {
+//               updatenotesCollection(object: {id: \$id, title: \$title, description: \$description}) {
+//                 id
+//                 title
+//                 description
+//               }
+//             }
+//           ''';
 
 const String deleteNote = '''
             mutation DeleteFromnotesCollection(\$id: ID!) {

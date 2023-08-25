@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Mutation(
-                        options: MutationOptions(document: gql(updateNote)),
+                        options: MutationOptions(document: gql(deleteNote)),
                         builder: (
                           RunMutation runMutation,
                           QueryResult? result,
