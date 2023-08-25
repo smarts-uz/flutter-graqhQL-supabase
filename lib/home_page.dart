@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_graphql_testapp/add_note.dart';
 import 'package:flutter_graphql_testapp/constanta.dart';
+import 'package:flutter_graphql_testapp/delete.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -18,19 +19,25 @@ class _MyHomePageState extends State<MyHomePage> {
         title: const Text('Notes'),
         actions: [
           IconButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (ctx) => const AddNoteScreen(),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.add))
+            onPressed: () {},
+            icon: const Icon(Icons.refresh),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (ctx) => const AddNoteScreen(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.add),
+          ),
         ],
       ),
       body: Query(
         options: QueryOptions(
           document: gql(getNotes),
+          pollInterval: const Duration(seconds: 2),
         ),
         builder: (QueryResult result, {fetchMore, refetch}) {
           if (result.hasException) {
@@ -63,53 +70,26 @@ class _MyHomePageState extends State<MyHomePage> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.edit, color: Colors.yellow),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('Confirm Deletion'),
-                                content: const Text(
-                                    'Are you sure you want to delete this note?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(
-                                          context); // Close the dialog
-                                    },
-                                    child: const Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(
-                                          context); // Close the dialog
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            'Removed Data',
-                                            style:
-                                                TextStyle(color: Colors.yellow),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: const Text(
-                                      'Delete',
-                                    ),
-                                  ),
-                                ],
-                              );
+                      Mutation(
+                        options: MutationOptions(document: gql(updateNote)),
+                        builder: (
+                          RunMutation runMutation,
+                          QueryResult? result,
+                        ) {
+                          return ElevatedButton(
+                            onPressed: () {
+                              runMutation({
+                                'id': user['node']['id'],
+                                'title': 'Updated Title',
+                                'description': 'Updated Description',
+                              });
                             },
+                            child: const Text('Update'),
                           );
                         },
-                        icon: const Icon(Icons.delete, color: Colors.yellow),
                       ),
+                      const SizedBox(width: 10),
+                      DeleteMutation(id: user['node']['id'].toString()),
                     ],
                   ),
                 ),

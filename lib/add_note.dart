@@ -1,4 +1,8 @@
+// ignore_for_file: void_checks, avoid_print
+
 import 'package:flutter/material.dart';
+import 'package:flutter_graphql_testapp/constanta.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
 class AddNoteScreen extends StatefulWidget {
   const AddNoteScreen({super.key});
@@ -9,7 +13,6 @@ class AddNoteScreen extends StatefulWidget {
 
 class _AddNoteScreenState extends State<AddNoteScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _idController = TextEditingController();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
 
@@ -25,18 +28,6 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
           key: _formKey,
           child: Column(
             children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'ID',
-                ),
-                controller: _titleController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a unique ID';
-                  }
-                  return null;
-                },
-              ),
               TextFormField(
                 decoration: const InputDecoration(
                   labelText: 'Title',
@@ -63,25 +54,34 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Added Data',
-                            style: TextStyle(color: Colors.yellow),
-                          ),
-                        ),
-                      );
-                      Navigator.pop(context);
-                    }
+              Mutation(
+                options: MutationOptions(
+                  document: gql(addNote),
+                  update: (GraphQLDataProxy cache, QueryResult? result) {
+                    return cache;
                   },
-                  child: const Text('Add Note'),
+                  onCompleted: (dynamic resultData) {
+                    print(resultData);
+                  },
                 ),
-              )
+                builder: (
+                  RunMutation runMutation,
+                  QueryResult? result,
+                ) {
+                  return ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        runMutation({
+                          'title': _titleController.text,
+                          'description': _descriptionController.text,
+                        });
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: const Text('Add Note'),
+                  );
+                },
+              ),
             ],
           ),
         ),

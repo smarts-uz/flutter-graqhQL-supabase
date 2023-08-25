@@ -13,33 +13,39 @@ const String getNotes = '''
           ''';
 
 const String addNote = '''
-            // mutation AddNote(\$title: String!, \$description: String!) {
-            //   insert_notesCollection_one(object: {title: \$title, description: \$description}) {
-            //     id
-            //     title
-            //     description
-            //   }
-            // }
+           mutation InsertIntonotesCollection(\$title: String!, \$description: String!) {
+    insertIntonotesCollection(objects: {title: \$title, description: \$description}) {
+        affectedCount
+        records {
+            nodeId
+            id
+            title
+            description
+        }
+    }
+}
           ''';
 
 const String updateNote = '''
-            // mutation UpdateNote(\$id: Int!, \$title: String!, \$description: String!) {
-            //   update_notesCollection_by_pk(pk_columns: {id: \$id}, _set: {title: \$title, description: \$description}) {
-            //     id
-            //     title
-            //     description
-            //   }
-            // }
+            mutation UpdatenotesCollection(\$id: ID!, \$title: String!, \$description: String!) {
+              updatenotesCollection(object: {id: \$id, title: \$title, description: \$description}) {
+                id
+                title
+                description
+              }
+            }
           ''';
 
 const String deleteNote = '''
-            // mutation DeleteNoteMutation(\$id: Int!) {
-            //   delete_notesCollection_by_pk(id: \$id) {
-            //     id
-            //     title
-            //     description
-            //   }
-            // }
+            mutation DeleteFromnotesCollection(\$id: ID!) {
+              deleteFromnotesCollection(atMost: 1, filter: {id: {eq: \$id}}) {
+                records {
+                  id
+                  title
+                  description
+                }
+              }
+            }
           ''';
 
 const String baseUrl = 'https://rdmythxwzdcbqhaheafv.supabase.co/graphql/v1';
